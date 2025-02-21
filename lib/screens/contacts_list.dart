@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:contact_management_app/services/api.dart';
 import 'package:contact_management_app/screens/edit_contact.dart';
 
+/// ContactsList is a stateful widget that displays a list of contacts.
 class ContactsList extends StatefulWidget {
   const ContactsList({super.key});
 
@@ -10,8 +11,11 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
+  // Instance of the API service to fetch and manage contacts.
   final ApiService apiService = ApiService();
+  // Future object to hold the list of contacts fetched from the API.
   late Future<List<Map<String, dynamic>>> _contactsFuture;
+  // Boolean flag to track loading state for delete operations.
   bool _isLoading = false;
 
   @override
@@ -20,16 +24,19 @@ class _ContactsListState extends State<ContactsList> {
     _loadContacts();
   }
 
+  /// Loads contacts from the API and assigns the result to `_contactsFuture`.
   void _loadContacts() {
     _contactsFuture = apiService.getAllContacts();
   }
 
+  /// Refreshes the contact list by reloading data.
   Future<void> _refreshContacts() async {
     setState(() {
       _loadContacts();
     });
   }
 
+/// Deletes a contact by its ID and refreshes the list if successful.
   Future<void> _deleteContact(int contactId) async {
     try {
       setState(() => _isLoading = true);
@@ -56,6 +63,7 @@ class _ContactsListState extends State<ContactsList> {
     }
   }
 
+/// Navigates to the EditContact screen and refreshes the list upon returning.
   Future<void> _editContact(BuildContext context, int contactId) async {
     print('Editing contact with ID: $contactId'); // Debug print
     final result = await Navigator.push(
@@ -112,6 +120,7 @@ class _ContactsListState extends State<ContactsList> {
               );
             }
 
+            // Display the list of contacts.
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
@@ -144,6 +153,7 @@ class _ContactsListState extends State<ContactsList> {
                             _editContact(context, contactId);
                           },
                         ),
+                        // Delete button with confirmation dialog.
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () => showDialog(
